@@ -126,7 +126,13 @@ class EpubCreator(ContentProcessor):
 
         print("📦 Создание EPUB...")
         for i, prep in enumerate(prepared_chapters):
-            ch_name = self.parser.decode_html_entities(prep.get("name", "").strip())
+            name_raw = prep.get("name", "")
+            # Debug: check type of name_raw
+            if not isinstance(name_raw, str) and name_raw != "":
+                print(f"⚠️ Отладка: name_raw имеет тип {type(name_raw).__name__}: {name_raw}")
+            ch_name = self.parser.decode_html_entities(
+                name_raw.strip() if isinstance(name_raw, str) else str(name_raw) if name_raw else ""
+            )
             vol_num = str(prep["volume"])
 
             if total_volumes > 1 and not self.group_by_volumes and vol_num != "0":

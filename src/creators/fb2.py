@@ -154,7 +154,10 @@ class Fb2Creator(ContentProcessor):
 
         print("📦 Создание FB2...")
         for i, prep in enumerate(prepared_chapters, 1):
-            ch_name = self.parser.decode_html_entities(prep.get("name", "").strip())
+            name_raw = prep.get("name", "")
+            ch_name = self.parser.decode_html_entities(
+                name_raw.strip() if isinstance(name_raw, str) else str(name_raw)
+            )
             vol_num = str(prep["volume"])
 
             if total_volumes > 1 and not self.group_by_volumes and vol_num != "0":

@@ -74,7 +74,10 @@ class TxtCreator(ContentProcessor):
         self, prepared_chapter: Dict[str, Any], volume: str, total_volumes: int
     ) -> str:
         """Форматирование одной главы в текстовый блок."""
-        ch_name = self.parser.decode_html_entities(prepared_chapter.get("name", "").strip())
+        name_raw = prepared_chapter.get("name", "")
+        ch_name = self.parser.decode_html_entities(
+            name_raw.strip() if isinstance(name_raw, str) else str(name_raw)
+        )
 
         if total_volumes > 1 and not self.group_by_volumes and volume != "0":
             chapter_title = f'Том {volume} Глава {prepared_chapter["number"]}'

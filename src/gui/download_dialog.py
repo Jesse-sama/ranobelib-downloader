@@ -76,6 +76,9 @@ class DownloadWorker(QThread):
         """Запуск процесса скачивания и создания книг"""
         self.start_time = time.time()
         self.image_handler.reset()
+        
+        # Очищаем кэш перед началом загрузки
+        ContentProcessor.clear_cache()
 
         novel_id = self.novel_info.get("id")
         self._temp_dir = os.path.join(USER_DATA_DIR, "temp", f"images_{novel_id}")
@@ -202,6 +205,11 @@ class DownloadWorker(QThread):
                         "add_translator", creator.content_processor.add_translator
                     )
 
+                # Ensure all chapter names are strings before caching
+                for chapter in self.prepared_chapters:
+                    if "name" in chapter and not isinstance(chapter["name"], str):
+                        chapter["name"] = str(chapter["name"])
+                        
                 ContentProcessor._global_cache = {
                     (self.novel_info.get("id"), None): self.prepared_chapters
                 }

@@ -348,7 +348,16 @@ class MainWindow(QMainWindow):
                 details_html += f"<p><b>Теги:</b> {tags_text}</p>"
 
         raw_summary = self.novel_info.get("summary", "Описание отсутствует.")
-        decoded_summary = self.parser.decode_html_entities(raw_summary)
+        
+        # Handle both string and dictionary cases for summary
+        if isinstance(raw_summary, dict):
+            # If it's a dictionary, try to extract text content
+            summary_text = raw_summary.get("text", str(raw_summary))
+        else:
+            # If it's already a string, use it as is
+            summary_text = raw_summary
+            
+        decoded_summary = self.parser.decode_html_entities(summary_text)
         summary = decoded_summary.replace("\n", "<br>")
         details_html += f'<div style="margin-top: 10px;"><b>Описание:</b><br/>{summary}</div>'
 
@@ -452,4 +461,4 @@ class MainWindow(QMainWindow):
     def closeEvent(self, event):
         """Обработка закрытия приложения"""
         self._save_settings()
-        super().closeEvent(event) 
+        super().closeEvent(event)

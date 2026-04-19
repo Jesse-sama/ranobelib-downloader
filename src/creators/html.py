@@ -239,7 +239,10 @@ class HtmlCreator(ContentProcessor):
                 body_parts.append(f'<h2 id="vol-{vol_num}">Том {vol_num}</h2>')
 
             for prep in volume_chapters[vol_num]:
-                ch_name = self.parser.decode_html_entities(prep.get("name", "").strip())
+                name_raw = prep.get("name", "")
+                ch_name = self.parser.decode_html_entities(
+                    name_raw.strip() if isinstance(name_raw, str) else str(name_raw)
+                )
 
                 if total_volumes > 1 and not self.group_by_volumes and vol_num != "0":
                     chapter_title = f'Том {vol_num} Глава {prep["number"]}'
@@ -287,7 +290,10 @@ class HtmlCreator(ContentProcessor):
                 )
 
             for prep in volume_chapters[vol_num]:
-                ch_name = self.parser.decode_html_entities(prep.get("name", "").strip())
+                name_raw = prep.get("name", "")
+                ch_name = self.parser.decode_html_entities(
+                    name_raw.strip() if isinstance(name_raw, str) else str(name_raw)
+                )
 
                 if total_volumes > 1 and not self.group_by_volumes and vol_num != "0":
                     chapter_title = f'Том {vol_num} Глава {prep["number"]}'

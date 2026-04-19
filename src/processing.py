@@ -19,6 +19,11 @@ class ContentProcessor:
 
     _global_cache: Dict[Tuple[Any, Optional[str]], List[Dict[str, Any]]] = {}
 
+    @classmethod
+    def clear_cache(cls):
+        """Очистка глобального кэша глав."""
+        cls._global_cache.clear()
+
     def __init__(self, api: RanobeLibAPI, parser: RanobeLibParser, image_handler: ImageHandler):
         self.api = api
         self.parser = parser
@@ -44,6 +49,7 @@ class ContentProcessor:
 
         cache_key = (novel_info.get("id"), selected_branch_id)
         if cache_key in self._global_cache:
+            print("📦 Использование кэшированных глав...")
             return self._global_cache[cache_key]
 
         print("🔄 Обработка глав...")
@@ -79,7 +85,11 @@ class ContentProcessor:
 
         summary = ""
         if novel_info.get("summary"):
-            summary = self.parser.decode_html_entities(novel_info["summary"].strip())
+            summary_raw = novel_info["summary"]
+            if isinstance(summary_raw, str):
+                summary = self.parser.decode_html_entities(summary_raw.strip())
+            else:
+                summary = self.parser.decode_html_entities(str(summary_raw))
 
         genres: List[str] = []
         if novel_info.get("genres"):
@@ -348,10 +358,11 @@ class ContentProcessor:
             soup.insert(0, translator_tag)
             processed_html = str(soup)
 
+        name_raw = ch_info.get("name")
         result = {
             "volume": volume,
             "number": number,
-            "name": ch_info.get("name"),
+            "name": str(name_raw) if isinstance(name_raw, str) else str(name_raw) if name_raw else "",
             "html": processed_html,
         }
 

@@ -89,7 +89,8 @@ class ChapterTree(QTreeWidget):
             for chapter_info in volumes_data[vol_num]:
                 chapter, translations = chapter_info
 
-                ch_name = chapter.get("name", "").strip()
+                name_raw = chapter.get("name", "")
+                ch_name = name_raw.strip() if isinstance(name_raw, str) else str(name_raw) if name_raw else ""
                 ch_number = chapter.get("number", "?")
 
                 chapter_title = f"Глава {ch_number} - {ch_name}" if ch_name else f"Глава {ch_number}"
